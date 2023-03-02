@@ -1,9 +1,22 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends, FastAPI, HTTPException
 from sql.schemas.account import Account
+from sql.schemas.user import User
 from sqlalchemy.orm import Session
 
 from sql import models
-from sql.schemas import account
+from sql.database import SessionLocal, engine
+
+
+models.Base.metadata.create_all(bind=engine)
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 router = APIRouter(
     prefix="/account",
@@ -16,11 +29,12 @@ router = APIRouter(
 
 
 @router.post("/", status_code=status.HTTP_200_OK)
-async def account(acount:Account)->Account:
-    """
-
-    """
-    return {"message": "Hello World"}
+async def account(account:Account, db: Session = Depends(get_db)):
+    acc = models.Account(**account.dict())
+    db.add(acc)
+    db.commit()
+    db.refresh(acc)
+    return {**account.dict()}
 
 
 @router.get("/check/{id}", status_code=status.HTTP_200_OK)
