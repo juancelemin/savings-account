@@ -17,6 +17,7 @@ def get_db():
         db.close()
 
 
+
 router = APIRouter(
     prefix="/user",
     tags=["user"],
@@ -34,4 +35,11 @@ async def createUser(user:User,  db: Session = Depends(get_db))->User:
     db.commit()
     db.refresh(acc)
     return {**user.dict()}
+
+
+
+@router.get("/", status_code=status.HTTP_200_OK)
+async def getUser(user_id:int,  db: Session = Depends(get_db))->User:
+    return db.query(models.User).filter(models.User.id == user_id).first()
+
 

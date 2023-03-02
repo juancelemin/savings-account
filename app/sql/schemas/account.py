@@ -5,7 +5,7 @@ from pydantic import BaseModel
 class Account(BaseModel):
     id: int
     description: Union[str, None] = 'Saving Account'
-    amount: float = None
+    amount: float = 0.0
     user_id: int
 
 
