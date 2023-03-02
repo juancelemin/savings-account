@@ -64,5 +64,3 @@ async def withdrawals(val:float, account_id:int, user_id: int, db: Session = Dep
 
     res = db.query(models.Account).filter(models.Account.id == account_id ,models.Account.id == user_id).first()
     return res
-
-    return {"message": val}
